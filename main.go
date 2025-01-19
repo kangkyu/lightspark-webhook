@@ -4,11 +4,12 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
 const (
 	path = "/webhooks"
-	port = ":80"
+	port = ":8080"
 )
 
 func main() {
@@ -18,8 +19,15 @@ func main() {
 			log.Fatal("unable to read body")
 		}
 	})
-	err := http.ListenAndServe(port, nil)
+	err := http.ListenAndServe(":"+getEnv("PORT", port), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
 }
